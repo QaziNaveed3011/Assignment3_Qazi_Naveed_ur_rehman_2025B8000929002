@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Analysis AI - Working Solution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .student-info {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .solution-panel {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 40px;
+        }
+        
+        .solution-title {
+            color: #155724;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .main-content {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 40px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 40px;
+            background: white;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            background: #fafbfc;
+        }
+        
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+        
+        .describe-section {
+            margin-top: 20px;
+        }
+        
+        .describe-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .describe-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .connection-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .status-connected { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        
+        .model-response {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 300px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .response-placeholder {
+            color: #7f8c8d;
+            text-align: center;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 Vehicle Analysis AI</h1>
+            <p>Working Solution - Text-Based Analysis</p>
+        </header>
+        
+        <div class="student-info">
+            <strong>Name:</strong> Qazi Naveed Ur Rehman | 
+            <strong>ID:</strong> 2025B8000929002
+        </div>
+
+        <div class="solution-panel">
+            <div class="solution-title">✅ Working Solution Applied</div>
+            <p><strong>Using text-based analysis instead of direct image processing to avoid Ollama crashes.</strong></p>
+            <p>Upload an image, describe what you see, and get AI analysis based on your description.</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <h2 class="section-title">Upload & Describe</h2>
+                
+                <div id="connectionStatus" class="connection-status">
+                    Testing connection...
+                </div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div style="font-size: 3rem;">📸</div>
+                    <p>Click to select vehicle image</p>
+                    <p><small>For visual reference only</small></p>
+                    <button class="upload-btn">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="image-preview" id="imagePreview"></div>
+                
+                <div class="describe-section">
+                    <p><strong>Describe the vehicle you see:</strong></p>
+                    <textarea id="descriptionInput" placeholder="Example: A red SUV with modern design, large headlights, and a sporty appearance..." style="width: 100%; height: 100px; padding: 10px; border: 1px solid #bdc3c7; border-radius: 5px; margin-top: 10px;"></textarea>
+                    <button class="describe-btn" id="describeBtn" disabled>Analyze Vehicle Description</button>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Analyzing vehicle description...</p>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <h2 class="section-title">Analysis Results</h2>
+                
+                <div class="model-response" id="modelResponse">
+                    <div class="response-placeholder">
+                        Upload a vehicle image and describe what you see to get AI analysis<br><br>
+                        • Vehicle identification<br>
+                        • Features and specifications<br>
+                        • Market analysis<br>
+                        • Technical insights
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Vehicle Analysis AI | Working Text-Based Solution | Qazi Naveed Ur Rehman</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadBtn = uploadArea.querySelector('.upload-btn');
+            const imagePreview = document.getElementById('imagePreview');
+            const describeBtn = document.getElementById('describeBtn');
+            const descriptionInput = document.getElementById('descriptionInput');
+            const modelResponse = document.getElementById('modelResponse');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            let selectedFile = null;
+            let isConnected = false;
+            
+            // Test connection on load
+            testConnection();
+            
+            // File selection
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    selectedFile = this.files[0];
+                    displayImagePreview(selectedFile);
+                    describeBtn.disabled = !isConnected;
+                }
+            });
+            
+            descriptionInput.addEventListener('input', function() {
+                describeBtn.disabled = !isConnected || !this.value.trim();
+            });
+            
+            function displayImagePreview(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `
+                        <img src="${e.target.result}" class="preview-img" alt="Preview">
+                        <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
+                            ${file.name} - Use as visual reference
+                        </p>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            async function testConnection() {
+                connectionStatus.textContent = 'Testing Ollama connection...';
+                connectionStatus.className = 'connection-status';
+                
+                try {
+                    const response = await fetch('http://localhost:11435/api/tags');
+                    if (response.ok) {
+                        const data = await response.json();
+                        isConnected = true;
+                        connectionStatus.textContent = '✅ Connected! Ready for analysis';
+                        connectionStatus.className = 'connection-status status-connected';
+                        describeBtn.disabled = !descriptionInput.value.trim();
+                    } else {
+                        throw new Error('API not responding');
+                    }
+                } catch (error) {
+                    isConnected = false;
+                    connectionStatus.textContent = '❌ Cannot connect to Ollama';
+                    connectionStatus.className = 'connection-status status-error';
+                    describeBtn.disabled = true;
+                }
+            }
+            
+            describeBtn.addEventListener('click', async function() {
+                if (!descriptionInput.value.trim()) return;
+                
+                loadingIndicator.style.display = 'block';
+                describeBtn.disabled = true;
+                modelResponse.innerHTML = '<div class="response-placeholder">Analyzing vehicle description...</div>';
+                
+                try {
+                    const userDescription = descriptionInput.value.trim();
+                    const analysisPrompt = `
+                        Based on this vehicle description: "${userDescription}"
+                        
+                        Please provide a comprehensive vehicle analysis including:
+                        
+                        1. **Vehicle Identification**: What make, model, and type of vehicle this likely is
+                        2. **Key Features**: Notable design elements and characteristics
+                        3. **Technical Specifications**: Likely engine type, performance, and features
+                        4. **Market Position**: Where this vehicle fits in the market and typical competitors
+                        5. **Target Audience**: Who would typically buy this vehicle
+                        6. **Estimated Value**: Approximate price range for this type of vehicle
+                        
+                        Provide your analysis in a clear, structured format.
+                    `;
+                    
+                    const response = await fetch('http://localhost:11435/api/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'llama3',
+                            prompt: analysisPrompt,
+                            stream: false
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        modelResponse.innerHTML = `
+                            <div style="line-height: 1.6;">
+                                <strong>Vehicle Analysis Based on Your Description:</strong><br><br>
+                                ${formatResponse(data.response)}
+                            </div>
+                        `;
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                } catch (error) {
+                    modelResponse.innerHTML = `
+                        <div style="color: #dc3545;">
+                            <strong>Error:</strong> ${error.message}<br><br>
+                            Please ensure Ollama is running and models are available.
+                        </div>
+                    `;
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                    describeBtn.disabled = !descriptionInput.value.trim();
+                }
+            });
+            
+            function formatResponse(text) {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/(\d+\.)\s/g, '<br><strong>$1</strong> ');
+            }
+        });
+    </script>
+</body>
+</html>

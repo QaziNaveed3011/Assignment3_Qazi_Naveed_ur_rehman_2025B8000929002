@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemma3 Vision Model</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .student-info {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .student-info strong {
+            color: #495057;
+        }
+        
+        .main-content {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 40px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 40px;
+            background: white;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+        
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .file-types {
+            font-size: 0.85rem;
+            color: #95a5a6;
+        }
+        
+        .upload-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #2980b9;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question-section {
+            margin-top: 30px;
+        }
+        
+        .question-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .question-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border 0.3s ease;
+        }
+        
+        .question-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .question-example {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .analyze-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            flex: 2;
+        }
+        
+        .analyze-btn:hover {
+            background: #219653;
+        }
+        
+        .analyze-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .reset-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            flex: 1;
+        }
+        
+        .reset-btn:hover {
+            background: #c0392b;
+        }
+        
+        .model-response {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            min-height: 300px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .response-placeholder {
+            color: #7f8c8d;
+            text-align: center;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        .response-content {
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        
+        .response-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .response-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .response-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .response-text {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        
+        .response-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .section-title-small {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .bullet-points {
+            padding-left: 20px;
+        }
+        
+        .bullet-points li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .api-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f4fc;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .api-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .api-details {
+            font-size: 0.9rem;
+            color: #34495e;
+            line-height: 1.5;
+        }
+        
+        .endpoint {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gemma3 Vision Model</h1>
+            <p class="subtitle">Advanced AI image analysis with formatted, readable responses</p>
+        </header>
+        
+        <div class="student-info">
+            <strong>Name:</strong> Qazi Naveed Ur Rehman | 
+            <strong>ID:</strong> 2025B8000929002
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <h2 class="section-title">Upload & Analyze</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Drag & drop an image here or click to browse</p>
+                    <p class="file-types">Supported formats: JPG, PNG, GIF, WebP</p>
+                    <button class="upload-btn">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="image-preview" id="imagePreview">
+                    <!-- Image preview will appear here -->
+                </div>
+                
+                <div class="question-section">
+                    <label class="question-label">Ask the model a question (optional):</label>
+                    <input type="text" class="question-input" id="questionInput" placeholder="e.g., What's in this image? Describe the scene.">
+                    <p class="question-example">You can ask specific questions about the uploaded image</p>
+                    
+                    <div class="controls">
+                        <button class="analyze-btn" id="analyzeBtn" disabled>Analyze Image</button>
+                        <button class="reset-btn" id="resetBtn">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Processing image with AI model...</p>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <h2 class="section-title">Model Response</h2>
+                
+                <div class="model-response" id="modelResponse">
+                    <div class="response-placeholder">
+                        After uploading an image, click the "Analyze Image" button to get a description from the model.<br><br>
+                        You can also enter specific questions in the input box for more detailed answers.
+                    </div>
+                </div>
+                
+                <div class="api-info">
+                    <div class="api-title">API Information</div>
+                    <div class="api-details">
+                        This application uses a locally installed vision model, communicating via the Ollama API.<br>
+                        API endpoint:<br>
+                        <div class="endpoint">http://localhost:11435/api/generate</div>
+                        Current model: <strong>llava:latest</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Vision-Language Understanding Application | Powered by Ollama & LLaVA Model</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadBtn = uploadArea.querySelector('.upload-btn');
+            const imagePreview = document.getElementById('imagePreview');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const questionInput = document.getElementById('questionInput');
+            const modelResponse = document.getElementById('modelResponse');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            let selectedFile = null;
+            
+            // Click on upload area or button to trigger file input
+            uploadArea.addEventListener('click', function(e) {
+                if (e.target !== uploadBtn) {
+                    fileInput.click();
+                }
+            });
+            
+            uploadBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                fileInput.click();
+            });
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    selectedFile = this.files[0];
+                    displayImagePreview(selectedFile);
+                    analyzeBtn.disabled = false;
+                }
+            });
+            
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#3498db';
+                uploadArea.style.background = '#f0f8ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.borderColor = '#bdc3c7';
+                uploadArea.style.background = '#fafbfc';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#bdc3c7';
+                uploadArea.style.background = '#fafbfc';
+                
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    selectedFile = e.dataTransfer.files[0];
+                    fileInput.files = e.dataTransfer.files;
+                    displayImagePreview(selectedFile);
+                    analyzeBtn.disabled = false;
+                }
+            });
+            
+            // Display image preview
+            function displayImagePreview(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" class="preview-img" alt="Preview">`;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Reset functionality
+            resetBtn.addEventListener('click', function() {
+                fileInput.value = '';
+                selectedFile = null;
+                imagePreview.innerHTML = '';
+                questionInput.value = '';
+                analyzeBtn.disabled = true;
+                modelResponse.innerHTML = `
+                    <div class="response-placeholder">
+                        After uploading an image, click the "Analyze Image" button to get a description from the model.<br><br>
+                        You can also enter specific questions in the input box for more detailed answers.
+                    </div>
+                `;
+            });
+            
+            // Analyze image
+            analyzeBtn.addEventListener('click', function() {
+                if (!selectedFile) return;
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                analyzeBtn.disabled = true;
+                
+                // Prepare prompt
+                const userQuestion = questionInput.value.trim();
+                const prompt = userQuestion 
+                    ? userQuestion 
+                    : "Describe this image in detail. What objects, scenes, colors, and context can you see?";
+                
+                // Call Ollama API
+                analyzeImageWithOllama(selectedFile, prompt);
+            });
+            
+            // Convert image to base64
+            function imageToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64 = reader.result.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // Format the AI response for better readability
+            function formatResponse(responseText) {
+                // Clean up the response
+                let formatted = responseText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
+                    .replace(/\n\s*\n/g, '\n\n') // Remove extra line breaks
+                    .trim();
+                
+                // Split into paragraphs
+                const paragraphs = formatted.split('\n\n');
+                
+                let html = `
+                    <div class="response-header">
+                        <div class="response-icon">🤖</div>
+                        <div class="response-title">AI Analysis</div>
+                    </div>
+                    <div class="response-text">
+                `;
+                
+                paragraphs.forEach(paragraph => {
+                    if (paragraph.trim()) {
+                        // Check if paragraph looks like a list
+                        if (paragraph.includes('- ') || paragraph.includes('• ') || paragraph.match(/\d+\./)) {
+                            const listItems = paragraph.split(/\n- |\n• |\n\d+\./).filter(item => item.trim());
+                            if (listItems.length > 1) {
+                                html += `<div class="response-section">
+                                    <div class="section-title-small">Key Observations:</div>
+                                    <ul class="bullet-points">`;
+                                listItems.forEach(item => {
+                                    if (item.trim()) {
+                                        html += `<li>${item.trim().replace(/^-\s*|^•\s*|^\d+\.\s*/, '')}</li>`;
+                                    }
+                                });
+                                html += `</ul></div>`;
+                            } else {
+                                html += `<p>${paragraph}</p>`;
+                            }
+                        } else {
+                            html += `<p>${paragraph}</p>`;
+                        }
+                    }
+                });
+                
+                html += `</div>`;
+                return html;
+            }
+            
+            // Analyze image using Ollama API
+            async function analyzeImageWithOllama(file, prompt) {
+                try {
+                    const base64Image = await imageToBase64(file);
+                    
+                    const requestData = {
+                        model: 'llava:latest',
+                        prompt: prompt,
+                        images: [base64Image],
+                        stream: false
+                    };
+                    
+                    const response = await fetch('http://localhost:11435/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Display the result with formatted response
+                    if (data.response) {
+                        modelResponse.innerHTML = formatResponse(data.response);
+                    } else {
+                        modelResponse.innerHTML = `
+                            <div class="response-content">
+                                <div class="response-header">
+                                    <div class="response-icon">⚠️</div>
+                                    <div class="response-title">No Response</div>
+                                </div>
+                                <p>The model did not return a response. Please try again.</p>
+                            </div>
+                        `;
+                    }
+                    
+                } catch (error) {
+                    console.error('Error analyzing image:', error);
+                    modelResponse.innerHTML = `
+                        <div class="response-content">
+                            <div class="response-header">
+                                <div class="response-icon">❌</div>
+                                <div class="response-title">Error</div>
+                            </div>
+                            <div class="response-section">
+                                <div class="section-title-small">Details:</div>
+                                <p>${error.message}</p>
+                            </div>
+                            <div class="response-section">
+                                <div class="section-title-small">Troubleshooting:</div>
+                                <ul class="bullet-points">
+                                    <li>Make sure Ollama is running on localhost:11435</li>
+                                    <li>Verify LLaVA model is downloaded (ollama pull llava)</li>
+                                    <li>Test with command: ollama run llava --image "your-image.jpg" "describe this"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                } finally {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    analyzeBtn.disabled = false;
+                }
+            }
+            
+            // Allow Enter key to trigger analysis
+            questionInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !analyzeBtn.disabled) {
+                    analyzeBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
